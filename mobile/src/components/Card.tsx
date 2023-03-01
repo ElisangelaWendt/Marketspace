@@ -1,11 +1,18 @@
 import { Image, Text, VStack } from "native-base";
+import { TouchableOpacity } from "react-native";
 
-export function Card(){
+interface CardProps{
+  onPress: () => void;
+  name: string;
+  value: string
+}
+
+export function Card({onPress, name, value}: CardProps){
   return(
-    <VStack>
+    <TouchableOpacity onPress={onPress}>
       <Image source={{uri: "https://wallpaperaccess.com/full/317501.jpg"}} h={38} w={40} alt="Imagem do produto"/>
-      <Text>Nome</Text>
-      <Text>RS </Text>
-    </VStack>
+      <Text>{name}</Text>
+      <Text>RS {value}</Text>
+    </TouchableOpacity>
   )
 }

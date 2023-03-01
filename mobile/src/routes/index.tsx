@@ -6,7 +6,7 @@ import { Box, useTheme } from "native-base";
 import { useContext } from "react";
 import { Loading } from "../components/Loading";
 import { Login } from "../pages/Login";
-import { AppRoutes } from "./app.routes";
+import { AppRoutesWithoutBottomTab } from "./AppRoutesWithoutBottomTab";
 import { AuthRoutes } from "./auth.routes";
 // import { AuthRoutes } from "./auth.routes";
 
@@ -25,7 +25,7 @@ export function Routes() {
     // box é usado para qunado for trocar de uma tela para a outra não aparecer a tela branca
     <Box flex={1} bg='gray.200'>
       <NavigationContainer theme={theme}>
-        <AppRoutes />
+        <AppRoutesWithoutBottomTab/>
         {/* {user.id ? <AppRoutes/> : <AuthRoutes/> } */}
 
       </NavigationContainer>

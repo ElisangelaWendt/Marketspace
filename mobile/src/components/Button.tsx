@@ -1,6 +1,6 @@
 import { Button as ButtonNativeBase, IButtonProps,  Text} from 'native-base'
 
-type Props = IButtonProps &{
+export type Props = IButtonProps &{
   title: string,
   variant?: 'blue' | 'gray' | 'black' //ou é outline ou é solid
 }

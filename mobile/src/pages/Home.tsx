@@ -4,8 +4,17 @@ import { Header } from "../components/Header";
 import { Feather } from '@expo/vector-icons'
 import Input, { SearchInput } from "../components/input";
 import { Card } from "../components/Card";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesProps } from "../routes/AppRoutesWithoutBottomTab";
 
 export function Home() {
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
+
+  function handleGoToDetails(){
+    navigation.navigate("Details")
+  }
+
   return (
     <ScrollView marginX={6}>
       <Header />
@@ -28,7 +37,7 @@ export function Home() {
       </TouchableOpacity>
       <Text color='gray.500' fontSize='sm' mt={8} mb={3}>Seus produtos anunciados para venda</Text>
       <SearchInput placeholder="Buscar Anúncio"/>
-      <Card/>
+      <Card name="Nome" onPress={handleGoToDetails} value="valor"/>
     </ScrollView>
   )
 }
