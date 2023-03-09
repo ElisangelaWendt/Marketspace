@@ -25,7 +25,7 @@ export function Routes() {
     // box é usado para qunado for trocar de uma tela para a outra não aparecer a tela branca
     <Box flex={1} bg='gray.200'>
       <NavigationContainer theme={theme}>
-        <AppRoutesWithoutBottomTab/>
+        <AuthRoutes/>
         {/* {user.id ? <AppRoutes/> : <AuthRoutes/> } */}
 
       </NavigationContainer>

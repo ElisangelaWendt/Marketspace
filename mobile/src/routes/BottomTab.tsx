@@ -1,30 +1,34 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs/lib/typescript/src/types";
+import LogoutSvg from '../../assets/Logout.svg'
 
 import HomeSvg from '../../assets/home.svg'
 import TagSvg from '../../assets/Tag.svg'
-import LogoutSvg from '../../assets/Logout.svg'
 // import HistorySvg from '@assets/history.svg'
 // import ProfileSvg from '@assets/profile.svg'
 import { useTheme } from "native-base";
-import { Platform } from "react-native";
+import { Platform, TouchableOpacity } from "react-native";
 import { Advert } from "../pages/Adverts";
 import { Home } from "../pages/Home";
-import { Login } from "../pages/Login";
-import { AuthRoutes } from "./auth.routes";
-import { CreateAdvert } from "../pages/CreateAdvert";
-import { Details } from "../pages/Details";
+import { CommonActions, useNavigation } from "@react-navigation/native";
+import { useState } from "react";
+import { AuthNavigatorRoutesProps, AuthRoutes } from "./auth.routes";
+
 
 type AppRoutes = {
   Home: undefined;
   Advert: undefined;
+  AuthRoutes:undefined
 }
+
+
 
 export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>
 
 const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>()
 
 export function BottomTab() {
+  const navigation = useNavigation<AuthNavigatorRoutesProps>();
 
   const { sizes, colors } = useTheme()
 
@@ -62,8 +66,30 @@ export function BottomTab() {
           )
         }}
       />
-      
-      
+      <Screen
+        name="AuthRoutes"
+        component={AuthRoutes}
+        
+        options={{
+          tabBarStyle: { display:'none'} , // serve para não aparecer a tab bar 
+          tabBarIcon: ({ color }) => ( <LogoutSvg  width={iconSizes} height={iconSizes} />),
+          
+        }}
+      />
+      {/* <Screen
+      name="AuthRoutes"
+        component={AuthRoutes}
+        options={{
+          tabBarButton: (props) => (
+            <TouchableOpacity onPress={(props) => {
+              setativo('none')
+              navigation.navigate('AuthRoutes')
+            }}>
+               <LogoutSvg  width={iconSizes} height={iconSizes} />
+            </TouchableOpacity>
+          ),
+        }}
+      /> */}
     </Navigator>
   )
 }

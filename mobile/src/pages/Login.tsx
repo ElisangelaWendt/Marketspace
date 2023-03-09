@@ -10,6 +10,7 @@ import { AppError } from '../utils/AppError';
 import { useState } from 'react';
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import axios from 'axios';
 
 type FormDataProps = {
   name: string;

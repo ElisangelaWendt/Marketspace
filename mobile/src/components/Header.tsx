@@ -4,8 +4,14 @@ import { Button } from "./Button"
 import {Feather} from '@expo/vector-icons'
 import { useNavigation } from "@react-navigation/native"
 import { AuthNavigatorRoutesProps } from "../routes/auth.routes"
+import { AppNavigatorRoutesProps } from "../routes/AppRoutesWithoutBottomTab"
 
 export function Header() {
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
+  function handleNavigateToCreateAdvert(){
+    navigation.navigate("CreateAdvert")
+  }
 
   return (
     <HStack marginTop={16} justifyContent="space-between">
@@ -14,7 +20,7 @@ export function Header() {
         <Text fontSize='md'>Boas Vindas</Text>
         <Text fontFamily='heading' fontSize='md'>Nome</Text>
       </VStack>
-      <Button title="+ Criar Anúncio" variant='black' w={140} alignSelf='flex-end' />
+      <Button title="+ Criar Anúncio" variant='black' w={140} alignSelf='flex-end' onPress={handleNavigateToCreateAdvert}/>
     </HStack>
   )
 }
@@ -31,7 +37,7 @@ export function SimpleHeader({ canGoBack, title, add, rightIcon, onPress }: Simp
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
 
   return (
-    <HStack justifyContent='space-between' marginTop={16} >
+    <HStack justifyContent='space-between' marginTop={16} marginBottom={4} paddingX={6}>
       {canGoBack ?
       <Feather name="arrow-left" onPress={navigation.goBack} size={24} />
       :

@@ -20,13 +20,16 @@ export function Details() {
       <View mt={7} bgColor="gray.300" maxW={14} alignItems="center" rounded='full'>
         <Text fontFamily='heading'>Usado</Text>
       </View>
-      <HStack>
+      <HStack justifyContent='space-between'>
       <Text fontFamily='heading' fontSize='xl'>Nome do item</Text>
-      <Text color='blue.400'>Preço</Text>
+      <Text color='blue.400' fontSize='xl'>Preço</Text>
       </HStack>
-      <Text>Descrição</Text>
-      <HStack>
-      <Text>Aceita troca?</Text>
+      <Text mt={2} mb={6}>Cras congue cursus in tortor sagittis placerat nunc, 
+      tellus arcu. Vitae ante leo eget maecenas urna mattis cursus. 
+      Mauris metus amet nibh mauris mauris accumsan, euismod. 
+      Aenean leo nunc, purus iaculis in aliquam.</Text>
+      <HStack mb={8}>
+      <Text fontFamily='heading'mr={2}>Aceita troca?</Text>
       <Text>Sim/não</Text>
       </HStack>
       <Text fontFamily='heading'>
@@ -34,8 +37,8 @@ export function Details() {
       </Text>
       </ScrollView>
       </VStack>
-      <HStack  justifyContent='space-between' alignItems='center' marginX={6} marginY={5} bg="red.200">
-        <Text>Valor</Text>
+      <HStack h={90} bgColor='gray.100' justifyContent='space-between' alignItems='center' paddingX={8}>
+        <Text color='blue.400' fontSize='xl' >Valor</Text>
         <Button 
         variant='blue'
         title="Entrar em contato"

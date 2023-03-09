@@ -5,9 +5,10 @@ import { useState } from 'react';
 type Props = IInputProps & {
   errorMessage?: string | null
   icon?: boolean
+  height?: number
 }
 
-export default function Input({ errorMessage = null, icon = false, isInvalid, ...rest }: Props) {
+export default function Input({ errorMessage = null, icon = false, isInvalid,height = 14, ...rest }: Props) {
   const invalid = !!errorMessage || isInvalid;
   const [visible, setVisible] = useState(false)
 
@@ -22,7 +23,7 @@ export default function Input({ errorMessage = null, icon = false, isInvalid, ..
   return (
     <FormControl isInvalid={invalid} mb={4}>
       <HStack bg="gray.100"
-        h={14}
+        h={height}
         borderRadius={6}
         >
       <NativeBasInput

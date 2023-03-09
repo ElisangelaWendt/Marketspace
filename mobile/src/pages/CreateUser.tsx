@@ -16,6 +16,7 @@ import { api } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import * as ImagePicker from 'expo-image-picker'
 import * as FileSystem from 'expo-file-system';
+import { ImagePickerSuccessResult } from 'expo-image-picker/build/ImagePicker.types';
 
 type FormDataProps = {
   avatar: string
@@ -51,6 +52,8 @@ export function CreateUser() {
     navigation.navigate('Login')
   }
 
+  var photoInfo;
+
   async function handleUserPhotoSelect() {
     setPhotoIsLoading(true)
     try {
@@ -66,7 +69,9 @@ export function CreateUser() {
       }
       if (photoSelected.assets[0].uri) {
         //informações da foto
-        const photoInfo = await FileSystem.getInfoAsync(photoSelected.assets[0].uri)
+        photoInfo = await FileSystem.getInfoAsync(photoSelected.assets[0].uri)
+        console.log(photoInfo.uri.split('.'). pop())
+        return photoInfo
 
         //caso queira limitar o tamanho da foto
         // if (photoInfo.size && (photoInfo.size / 2048) > 100) {
@@ -78,20 +83,20 @@ export function CreateUser() {
         // }
 
         //extensão da foto
-        const fileExtension = photoSelected.assets[0].uri.split('.').pop()
+        // const fileExtension = photoSelected.assets[0].uri.split('.').pop()
 
         // const photoFile = {
-          //junta o nome do usuário + extensão + deixa tudo minusculo
+        // //junta o nome do usuário + extensão + deixa tudo minusculo
         //   name: `${user.name}.${fileExtension}`.toLowerCase(),
         //   uri: photoSelected.assets[0].uri,
         //   type: `${photoSelected.assets[0].type}/${fileExtension}`
         // }as any
-
+        // console.log(photoFile)
         //criar formulário para enviar o arquivo da foto para o backend
         // const userPhotoUploadForm = new FormData()
         // userPhotoUploadForm.append('avatar', photoFile)
 
-        console.log(fileExtension)
+        // console.log(fileExtension)
 
       }
 
@@ -103,6 +108,7 @@ export function CreateUser() {
   }
 
   async function handleSignUp({ avatar, name, email, tel, password }: FormDataProps) {
+
     // try {
     //   setIsLoading(true)
     //   await api.post('/users', { avatar, name, email, tel, password })
@@ -128,14 +134,19 @@ export function CreateUser() {
         <Icon />
         <Text fontFamily='heading' fontSize='xl' marginBottom={2}>Boas Vindas!</Text>
         <Text fontSize={'sm'}>Crie sua conta e use o espaço para comprar itens variados e vender seus produtos</Text>
-        <TouchableOpacity
-        onPress={handleUserPhotoSelect}
-        style={{ borderWidth: 2, borderRadius: 100, width: 88, height: 88, borderColor: '#647AC7' }} >
-          <ButtonSvg style={{ alignSelf: 'flex-end', justifyContent: 'flex-end', marginTop: 44 }} />
-        </TouchableOpacity>
+        <Controller
+          control={control}
+          name="avatar"
+          render={() => (
+            <TouchableOpacity
+              onPress={handleUserPhotoSelect}
+              style={{ borderWidth: 2, borderRadius: 100, width: 88, height: 88, borderColor: '#647AC7' }} >
+              <ButtonSvg style={{ alignSelf: 'flex-end', justifyContent: 'flex-end', marginTop: 44 }} />
+            </TouchableOpacity>
+          )} />
       </Center>
       <Center marginY={6}>
-        <Controller
+        {/* <Controller
           control={control}
           name="avatar"
           render={({ field: { onChange, value } }) => (
@@ -144,7 +155,7 @@ export function CreateUser() {
               value={value}
               errorMessage={errors.name?.message}
             />
-          )}/>
+          )}/> */}
         <Controller
           control={control}
           name="name"
@@ -154,7 +165,7 @@ export function CreateUser() {
               value={value}
               errorMessage={errors.name?.message}
             />
-          )}/>
+          )} />
         <Controller
           control={control}
           name="email"
@@ -174,7 +185,7 @@ export function CreateUser() {
           name="tel"
           render={({ field: { onChange, value } }) => (
             <Input
-            keyboardType='number-pad'
+              keyboardType='number-pad'
               placeholder='Telefone'
               icon={false}
               onChangeText={onChange}
