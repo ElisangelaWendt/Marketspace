@@ -1,26 +1,39 @@
 import { HStack, Image, Text, View, VStack } from "native-base"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "./Button"
-import {Feather} from '@expo/vector-icons'
+import { Feather } from '@expo/vector-icons'
 import { useNavigation } from "@react-navigation/native"
 import { AuthNavigatorRoutesProps } from "../routes/auth.routes"
 import { AppNavigatorRoutesProps } from "../routes/AppRoutesWithoutBottomTab"
+import { useAuth } from "../hooks/useAuth"
+import defaultUserPhotoImg from '../../assets/Avatar.svg'
+import { api } from "../services/api"
 
 export function Header() {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
+  const { user } = useAuth()
 
-  function handleNavigateToCreateAdvert(){
+  useEffect(() => {
+    console.log(api.defaults.baseURL)
+  }, [])
+
+  function handleNavigateToCreateAdvert() {
     navigation.navigate("CreateAdvert")
   }
 
   return (
     <HStack marginTop={16} justifyContent="space-between">
-      <Image source={{ uri: "https://wallpaperaccess.com/full/317501.jpg" }} rounded='full' size={45} alt={"Foto do usuário"} />
-      <VStack>
-        <Text fontSize='md'>Boas Vindas</Text>
-        <Text fontFamily='heading' fontSize='md'>Nome</Text>
-      </VStack>
-      <Button title="+ Criar Anúncio" variant='black' w={140} alignSelf='flex-end' onPress={handleNavigateToCreateAdvert}/>
+      <HStack>
+        {user.avatar
+          &&
+          <Image source={{ uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }} rounded='full' size={45} alt={"Foto do usuário"} />
+        }
+        <VStack ml={3}>
+          <Text fontSize='md'>Boas Vindas</Text>
+          <Text fontFamily='heading' fontSize='md'>{user.name}</Text>
+        </VStack>
+      </HStack>
+      <Button title="+ Criar Anúncio" variant='black' w={140} alignSelf='flex-end' onPress={handleNavigateToCreateAdvert} />
     </HStack>
   )
 }
@@ -39,15 +52,15 @@ export function SimpleHeader({ canGoBack, title, add, rightIcon, onPress }: Simp
   return (
     <HStack justifyContent='space-between' marginTop={16} marginBottom={4} paddingX={6}>
       {canGoBack ?
-      <Feather name="arrow-left" onPress={navigation.goBack} size={24} />
-      :
-      <View marginLeft={4}></View>
+        <Feather name="arrow-left" onPress={navigation.goBack} size={24} />
+        :
+        <View marginLeft={4}></View>
       }
       <Text fontSize='xl' fontFamily='heading'>{title}</Text>
       {add && rightIcon ?
-        <Feather name="plus" size={24} onPress={onPress}/>
-        : rightIcon && 
-        <Feather name="edit-3" size={24}/>
+        <Feather name="plus" size={24} onPress={onPress} />
+        : rightIcon &&
+        <Feather name="edit-3" size={24} />
       }
       {!rightIcon && <View></View>}
     </HStack>

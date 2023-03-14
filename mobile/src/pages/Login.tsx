@@ -7,7 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import { AuthNavigatorRoutesProps } from '../routes/auth.routes';
 import * as yup from 'yup'
 import { AppError } from '../utils/AppError';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from 'axios';
@@ -27,12 +27,18 @@ const signUpSchema = yup.object({
 export function Login() {
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
   const [isLoading, setIsLoading] = useState(false)
-  const { SignIn } = useAuth()
+  const { SignIn, signOut, user } = useAuth()
   const toast = useToast()
 
   function handleGoToCreateUser() {
     navigation.navigate('CreateUser')
   }
+
+  useEffect(() => {
+    if(user.id){
+      signOut()
+    }
+  },[]);
 
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
     resolver: yupResolver(signUpSchema)

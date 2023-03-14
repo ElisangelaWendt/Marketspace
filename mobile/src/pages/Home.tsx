@@ -6,10 +6,11 @@ import Input, { SearchInput } from "../components/input";
 import { Card } from "../components/Card";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesProps } from "../routes/AppRoutesWithoutBottomTab";
+import { useAuth } from "../hooks/useAuth";
 
 export function Home() {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
-
+  const { user } = useAuth()
 
   function handleGoToDetails(){
     navigation.navigate("Details")

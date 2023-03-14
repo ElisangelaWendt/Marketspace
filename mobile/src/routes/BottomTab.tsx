@@ -76,20 +76,6 @@ export function BottomTab() {
           
         }}
       />
-      {/* <Screen
-      name="AuthRoutes"
-        component={AuthRoutes}
-        options={{
-          tabBarButton: (props) => (
-            <TouchableOpacity onPress={(props) => {
-              setativo('none')
-              navigation.navigate('AuthRoutes')
-            }}>
-               <LogoutSvg  width={iconSizes} height={iconSizes} />
-            </TouchableOpacity>
-          ),
-        }}
-      /> */}
     </Navigator>
   )
 }

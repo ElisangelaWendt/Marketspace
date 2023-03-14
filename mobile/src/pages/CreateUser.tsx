@@ -1,4 +1,4 @@
-import { Center, ScrollView, Text, useToast } from 'native-base'
+import { Center, Image, ScrollView, Text, useToast } from 'native-base'
 import Icon from '../../assets/Icon.svg'
 import Input from '../components/input'
 import { TouchableOpacity } from 'react-native';
@@ -40,8 +40,9 @@ export function CreateUser() {
   const toast = useToast()
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
   const { SignIn } = useAuth()
-  const [photoIsLoading, setPhotoIsLoading] = useState(false)
-  const { user, updateUserProfile } = useAuth()
+  const [userPhoto, setUserPhoto] = useState('')
+  const [photo, setPhoto] = useState('')
+  const [exphoto, setexPhoto] = useState()
 
 
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
@@ -53,15 +54,15 @@ export function CreateUser() {
   }
 
   var photoInfo;
-
+  const userPhotoUploadForm = new FormData()
   async function handleUserPhotoSelect() {
-    setPhotoIsLoading(true)
     try {
       const photoSelected = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 1,
         aspect: [4, 4],
         allowsEditing: true,
+        // base64: true
       })
 
       if (photoSelected.canceled) {
@@ -70,61 +71,55 @@ export function CreateUser() {
       if (photoSelected.assets[0].uri) {
         //informações da foto
         photoInfo = await FileSystem.getInfoAsync(photoSelected.assets[0].uri)
-        console.log(photoInfo.uri.split('.'). pop())
-        return photoInfo
-
-        //caso queira limitar o tamanho da foto
-        // if (photoInfo.size && (photoInfo.size / 2048) > 100) {
-        //   return toast.show({
-        //     title: 'Essa imagem é muito grande. Escolha uma de até 5MB',
-        //     placement: 'top',
-        //     bgColor: 'red.500'
-        //   })
-        // }
-
-        //extensão da foto
-        // const fileExtension = photoSelected.assets[0].uri.split('.').pop()
-
-        // const photoFile = {
-        // //junta o nome do usuário + extensão + deixa tudo minusculo
-        //   name: `${user.name}.${fileExtension}`.toLowerCase(),
-        //   uri: photoSelected.assets[0].uri,
-        //   type: `${photoSelected.assets[0].type}/${fileExtension}`
-        // }as any
-        // console.log(photoFile)
-        //criar formulário para enviar o arquivo da foto para o backend
-        // const userPhotoUploadForm = new FormData()
-        // userPhotoUploadForm.append('avatar', photoFile)
-
-        // console.log(fileExtension)
+        setPhoto(photoInfo.uri)
+        setexPhoto(photoSelected.assets[0].type)
 
       }
 
     } catch (error) {
       console.log(error)
     } finally {
-      setPhotoIsLoading(false)
     }
   }
 
-  async function handleSignUp({ avatar, name, email, tel, password }: FormDataProps) {
+  async function handleSignUp({ name, email, tel, password }: FormDataProps) {
+    try {
+      setIsLoading(true)
+      const fileExtension = photo.split('.').pop()
 
-    // try {
-    //   setIsLoading(true)
-    //   await api.post('/users', { avatar, name, email, tel, password })
-    //   await SignIn(email, password)
-    // } catch (error) {
-    //   console.log(error)
-    //   setIsLoading(false)
-    //   const isAppError = error instanceof AppError
-    //   const title = isAppError ? error.message : 'Não foi possível criar conta. Tente novamente mais tarde'
+      const photoFile = {
+        // //junta o nome do usuário + extensão + deixa tudo minusculo
+        name: `${name}.${fileExtension}`.toLowerCase(),
+        uri: photo,
+        type: `${exphoto}/${fileExtension}`
+      } as any
+      userPhotoUploadForm.append('avatar', photoFile)
+      userPhotoUploadForm.append('name', name)
+      userPhotoUploadForm.append('email', email)
+      userPhotoUploadForm.append('tel', tel)
+      userPhotoUploadForm.append('password', password)
 
-    //   toast.show({
-    //     title,
-    //     placement: 'top',
-    //     bgColor: 'red.500'
-    //   })
-    // }
+
+      const data = await api.post('users', userPhotoUploadForm, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+
+      await SignIn(email, password)
+    } catch (error) {
+      console.log(error)
+      setIsLoading(false)
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Não foi possível criar conta. Tente novamente mais tarde'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500'
+      })
+    }
+
   }
 
   return (
@@ -134,16 +129,17 @@ export function CreateUser() {
         <Icon />
         <Text fontFamily='heading' fontSize='xl' marginBottom={2}>Boas Vindas!</Text>
         <Text fontSize={'sm'}>Crie sua conta e use o espaço para comprar itens variados e vender seus produtos</Text>
-        <Controller
-          control={control}
-          name="avatar"
-          render={() => (
-            <TouchableOpacity
-              onPress={handleUserPhotoSelect}
-              style={{ borderWidth: 2, borderRadius: 100, width: 88, height: 88, borderColor: '#647AC7' }} >
-              <ButtonSvg style={{ alignSelf: 'flex-end', justifyContent: 'flex-end', marginTop: 44 }} />
-            </TouchableOpacity>
-          )} />
+
+        <TouchableOpacity
+          onPress={handleUserPhotoSelect}
+
+          style={{ borderWidth: 2, borderRadius: 100, width: 88, height: 88, borderColor: '#647AC7' }} >
+          {userPhoto ?
+            <Image source={{ uri: userPhoto }} alt="imagem do usuário" size={85} rounded="full" />
+            :
+            <ButtonSvg style={{ alignSelf: 'flex-end', justifyContent: 'flex-end', marginTop: 44 }} />
+          }
+        </TouchableOpacity>
       </Center>
       <Center marginY={6}>
         {/* <Controller
