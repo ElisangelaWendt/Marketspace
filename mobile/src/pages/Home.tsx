@@ -5,16 +5,33 @@ import { Feather } from '@expo/vector-icons'
 import Input, { SearchInput } from "../components/input";
 import { Card } from "../components/Card";
 import { useNavigation } from "@react-navigation/native";
-import { AppNavigatorRoutesProps } from "../routes/AppRoutesWithoutBottomTab";
+import { AppNavigatorRoutesProps } from "../routes/BottomTab";
 import { useAuth } from "../hooks/useAuth";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { api } from "../services/api";
+import { ProductDTO } from "../dtos/productDTS";
 
 export function Home() {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
-  const { user } = useAuth()
+  const [products, setProducts] = useState<ProductDTO[]>([])
 
   function handleGoToDetails(){
     navigation.navigate("Details")
   }
+
+  async function fetchProducts(){
+    try{
+      const response = await api.get('/products')
+      setProducts(response.data)
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchProducts()
+  },[])
 
   return (
     <ScrollView marginX={6}>

@@ -6,16 +6,11 @@ import { useNavigation } from "@react-navigation/native"
 import { AuthNavigatorRoutesProps } from "../routes/auth.routes"
 import { AppNavigatorRoutesProps } from "../routes/AppRoutesWithoutBottomTab"
 import { useAuth } from "../hooks/useAuth"
-import defaultUserPhotoImg from '../../assets/Avatar.svg'
 import { api } from "../services/api"
 
 export function Header() {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
   const { user } = useAuth()
-
-  useEffect(() => {
-    console.log(api.defaults.baseURL)
-  }, [])
 
   function handleNavigateToCreateAdvert() {
     navigation.navigate("CreateAdvert")
@@ -26,7 +21,7 @@ export function Header() {
       <HStack>
         {user.avatar
           &&
-          <Image source={{ uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }} rounded='full' size={45} alt={"Foto do usuário"} />
+          <Image source={{ uri: `${api.defaults.baseURL}/images/${user.avatar}` }} rounded='full' size={45} alt={"Foto do usuário"} />
         }
         <VStack ml={3}>
           <Text fontSize='md'>Boas Vindas</Text>

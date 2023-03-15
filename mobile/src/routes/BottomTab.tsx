@@ -13,12 +13,16 @@ import { Home } from "../pages/Home";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { AuthNavigatorRoutesProps, AuthRoutes } from "./auth.routes";
+import { CreateAdvert } from "../pages/CreateAdvert";
+import { Details } from "../pages/Details";
 
 
 type AppRoutes = {
   Home: undefined;
   Advert: undefined;
   AuthRoutes:undefined
+  CreateAdvert:undefined
+  Details: undefined
 }
 
 
@@ -69,11 +73,26 @@ export function BottomTab() {
       <Screen
         name="AuthRoutes"
         component={AuthRoutes}
-        
         options={{
           tabBarStyle: { display:'none'} , // serve para não aparecer a tab bar 
           tabBarIcon: ({ color }) => ( <LogoutSvg  width={iconSizes} height={iconSizes} />),
-          
+
+        }}
+      />
+      <Screen
+        name="CreateAdvert"
+        component={CreateAdvert}
+        options={{
+          tabBarStyle: { display:'none'} , // serve para não aparecer a tab bar
+          tabBarButton: () => null
+        }}
+      />
+      <Screen
+        name="Details"
+        component={Details}
+        options={{
+          tabBarStyle: { display:'none'} , // serve para não aparecer a tab bar
+          tabBarButton: () => null
         }}
       />
     </Navigator>
