@@ -3,11 +3,8 @@
 // import { useAuth } from "@hooks/useAuth";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { Box, useTheme } from "native-base";
-import { useContext } from "react";
 import { Loading } from "../components/Loading";
 import { useAuth } from "../hooks/useAuth";
-import { Login } from "../pages/Login";
-import { AppRoutesWithoutBottomTab } from "./AppRoutesWithoutBottomTab";
 import { AuthRoutes } from "./auth.routes";
 import { BottomTab } from "./BottomTab";
 // import { AuthRoutes } from "./auth.routes";

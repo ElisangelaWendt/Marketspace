@@ -1,4 +1,4 @@
-import { Checkbox, Text, View, VStack } from "native-base";
+import { Checkbox, HStack, ScrollView, Switch, Text, View, VStack } from "native-base";
 import { TouchableOpacity } from "react-native";
 import { SimpleHeader } from "../components/Header";
 import { Feather } from '@expo/vector-icons'
@@ -9,15 +9,18 @@ import { Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup'
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Footer } from "../components/Footer";
+import { SquareCheckbox } from "../components/SquareCheckbox";
+import { PaymentMethodsDTO } from "../dtos/paymentMethodsDTO";
+import { api } from "../services/api";
 
 type FormDataProps = {
   avatar: string
   name: string;
   value: string;
-  tel: string
-  password: string;
-  passwordConfirm: string;
+  description: string
+  acceptChange: string;
 }
 
 const signUpSchema = yup.object({
@@ -33,25 +36,41 @@ export function CreateAdvert() {
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
     resolver: yupResolver(signUpSchema)
   })
-  const [ checkedNew, setCheckedNew] = useState(false)
-  const [ checkedUsed, setCheckedUsed] = useState(false)
+  const [checkedNew, setCheckedNew] = useState(true)
+  const [checkedUsed, setCheckedUsed] = useState(false)
+  const [trade, setTrade] = useState(false)
+  const [photo, setPhoto] = useState('')
+  const [exphoto, setexPhoto] = useState()
+  var photoInfo;
+  const userPhotoUploadForm = new FormData()
+  const [boleto, setBoleto] = useState(false)
+  const [pix, setPix] = useState(false)
+  const [money, setMoney] = useState(false)
+  const [credit, setCredit] = useState(false)
+  const [deposito, setDeposito] = useState(false)
+  const [payment_methods, setPayment_methods] = useState([
+    
+  ])
 
-  function check(){
-    if(checkedNew){
-      setCheckedNew(false)
-    }else{
-      setCheckedNew(true)
+
+  async function check() {
+    if (checkedNew) {
+      await setCheckedNew(false)
+      await setCheckedUsed(true)
+    } else {
+      await setCheckedNew(true)
+      await setCheckedUsed(false)
     }
   }
-  
+
   async function handleProductPhotoSelect() {
-    // setPhotoIsLoading(true)
     try {
       const photoSelected = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 1,
         aspect: [4, 4],
         allowsEditing: true,
+        // base64: true
       })
 
       if (photoSelected.canceled) {
@@ -59,39 +78,14 @@ export function CreateAdvert() {
       }
       if (photoSelected.assets[0].uri) {
         //informações da foto
-        const photoInfo = await FileSystem.getInfoAsync(photoSelected.assets[0].uri)
-
-        //caso queira limitar o tamanho da foto
-        // if (photoInfo.size && (photoInfo.size / 2048) > 100) {
-        //   return toast.show({
-        //     title: 'Essa imagem é muito grande. Escolha uma de até 5MB',
-        //     placement: 'top',
-        //     bgColor: 'red.500'
-        //   })
-        // }
-
-        //extensão da foto
-        const fileExtension = photoSelected.assets[0].uri.split('.').pop()
-
-        // const photoFile = {
-        //junta o nome do usuário + extensão + deixa tudo minusculo
-        //   name: `${user.name}.${fileExtension}`.toLowerCase(),
-        //   uri: photoSelected.assets[0].uri,
-        //   type: `${photoSelected.assets[0].type}/${fileExtension}`
-        // }as any
-
-        //criar formulário para enviar o arquivo da foto para o backend
-        // const ProductUploadForm = new FormData()
-        // ProductUploadForm.append('avatar', photoFile)
-
-        console.log(fileExtension)
+        photoInfo = await FileSystem.getInfoAsync(photoSelected.assets[0].uri)
+        setPhoto(photoInfo.uri)
+        setexPhoto(photoSelected.assets[0].type)
 
       }
-
     } catch (error) {
       console.log(error)
     } finally {
-      // setPhotoIsLoading(false)
     }
   }
 
@@ -105,13 +99,13 @@ export function CreateAdvert() {
   //       uri: photo,
   //       type: `${exphoto}/${fileExtension}`
   //     } as any
-  //     ProductUploadForm.append('avatar', photoFile)
   //     ProductUploadForm.append('name', name)
-  //     ProductUploadForm.append('email', email)
-  //     ProductUploadForm.append('tel', tel)
-  //     ProductUploadForm.append('password', password)
-
-
+  //     ProductUploadForm.append('description', description)
+  //     ProductUploadForm.append('is_new', is_new)
+  //     ProductUploadForm.append('price', price)
+  //     ProductUploadForm.append('accept_trade', accept_trade)
+  //     ProductUploadForm.append('payment_methods', payment_methods)
+  // {
   //     const data = await api.post('users', ProductUploadForm, {
   //       headers: {
   //         'Content-Type': 'multipart/form-data'
@@ -128,7 +122,7 @@ export function CreateAdvert() {
         canGoBack
         title="Criar anúncio"
       />
-      <VStack marginX={6}>
+      <ScrollView marginX={6} showsVerticalScrollIndicator={false}>
 
         <Text fontFamily='heading' fontSize='md' mb={1}>
           Imagens
@@ -136,7 +130,9 @@ export function CreateAdvert() {
         <Text fontSize='sm' mb={4}>
           Escolha até 3 imagens para mostrar o quanto o seu produto é incrível!
         </Text>
-        <TouchableOpacity style={{ backgroundColor: '#D9D8DA', height: 100, width: 100, borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}  >
+        <TouchableOpacity
+          onPress={handleProductPhotoSelect}
+          style={{ backgroundColor: '#D9D8DA', height: 100, width: 100, borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}  >
           <Feather name="plus" size={24} color="#9F9BA1" />
         </TouchableOpacity>
         <Text fontFamily='heading' fontSize='md' mt={8}>
@@ -155,7 +151,7 @@ export function CreateAdvert() {
 
         <Controller
           control={control}
-          name="name"
+          name="description"
           render={({ field: { onChange, value } }) => (
             <Input
               placeholder="Descrição do produto"
@@ -165,6 +161,28 @@ export function CreateAdvert() {
               value={value}
             />
           )} />
+
+        <HStack mb={8}>
+
+          <Checkbox
+            isChecked={checkedNew}
+            onChange={() => check()}
+            value={"Produto novo"}
+            rounded="full"
+            mr={5}
+          >
+            <Text>Produto Novo</Text>
+          </Checkbox>
+          <Checkbox
+            isChecked={checkedUsed}
+            onChange={() => check()}
+            value={"Produto usado"}
+            rounded="full"
+          >
+            <Text>Produto Usado</Text>
+          </Checkbox>
+        </HStack>
+        <Text fontFamily='heading' fontSize='md'>Vendas</Text>
         <Controller
           control={control}
           name="value"
@@ -175,20 +193,16 @@ export function CreateAdvert() {
               value={value}
             />
           )} />
-        <Controller
-          control={control}
-          name="value"
-          render={({ field: { onChange, value } }) => (
-            <Checkbox
-            isChecked={checkedNew}
-            value={value}
-            rounded="full"
-            
-            >
-              <Text>aaaaaa</Text>
-            </Checkbox>
-          )} />
-      </VStack>
+        <Text fontFamily='heading'>Aceita troca?</Text>
+        <Switch size="lg" alignSelf='flex-start' onValueChange={() => setTrade(!trade)} />
+        <Text fontFamily='heading' mb={3}>Meios de pagamentos aceitos:</Text>
+        <SquareCheckbox isChecked={boleto} onChange={() => setBoleto(!boleto)} text="Boleto" />
+        <SquareCheckbox isChecked={pix} onChange={() => setPix(!pix)} text="Pix" />
+        <SquareCheckbox isChecked={money} onChange={() => setMoney(!money)} text="Dinheiro" />
+        <SquareCheckbox isChecked={credit} onChange={() => setCredit(!credit)} text="Cartão de Crédito" />
+        <SquareCheckbox isChecked={deposito} onChange={() => setDeposito(!deposito)} text="Depósito Bancário" />
+      </ScrollView>
+      <Footer title="Cancelar" title2="Avançar" variant1="gray" variant2="blue" />
     </>
   )
 }

@@ -4,9 +4,9 @@ import { Button } from "./Button"
 import { Feather } from '@expo/vector-icons'
 import { useNavigation } from "@react-navigation/native"
 import { AuthNavigatorRoutesProps } from "../routes/auth.routes"
-import { AppNavigatorRoutesProps } from "../routes/AppRoutesWithoutBottomTab"
 import { useAuth } from "../hooks/useAuth"
 import { api } from "../services/api"
+import { AppNavigatorRoutesProps } from "../routes/BottomTab"
 
 export function Header() {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
